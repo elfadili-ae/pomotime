@@ -3,9 +3,13 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import DigitalClock from "./DigitalClock";
 import { TimeContext } from "@/context/TimeContext";
 
-const Timer = () => {
+type TimerPropTypes = {
+  play: boolean;
+  setPlay: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Timer = ({ play, setPlay }: TimerPropTypes) => {
   const { focus, breakTime } = useContext(TimeContext).times;
-  const [play, setPlay] = useState(false);
   const circleRef = useRef(null);
   const [remainingTime, setRemainingTime] = useState(focus * 60); // Convert minutes to seconds
   const [isbreakTime, setIsBreaktime] = useState(false);
@@ -16,13 +20,15 @@ const Timer = () => {
       return;
     }
 
-    const circle = circleRef.current;
+    const circle = circleRef.current as SVGCircleElement | null;
     const radius = 122; // Radius of the circle
     const circumference = 2 * Math.PI * radius; // Circumference
 
     // Set strokeDasharray and strokeDashoffset for the initial state
-    circle.style.strokeDasharray = circumference;
-    circle.style.strokeDashoffset = circumference;
+    if (circle) {
+      circle.style.strokeDasharray = circumference.toString();
+      circle.style.strokeDashoffset = circumference.toString();
+    }
 
     const timeInterval = setInterval(() => {
       setRemainingTime((prevTime) => {
@@ -31,12 +37,14 @@ const Timer = () => {
         // Calculate the new strokeDashoffset based on remaining time
         const offset = circumference * (1 - newTime / (focus * 60));
         if (circle) {
-          circle.style.strokeDashoffset = offset;
+          circle.style.strokeDashoffset = offset.toString();
         }
         // Stop the timer when remainingTime reaches 0
         if (newTime <= 0) {
-          circle.style.strokeDasharray = circumference;
-          circle.style.strokeDashoffset = circumference;
+          if (circle) {
+            circle.style.strokeDasharray = circumference.toString();
+            circle.style.strokeDashoffset = circumference.toString();
+          }
           if (isbreakTime) {
             setIsBreaktime(false);
             setRemainingTime(focus * 60);
@@ -44,7 +52,6 @@ const Timer = () => {
             setIsBreaktime(true);
             setRemainingTime(breakTime * 60);
           }
-          // clearInterval(timeInterval);
         }
         return newTime;
       });
@@ -57,6 +64,7 @@ const Timer = () => {
     <div className="w-full h-full flex justify-center items-center relative">
       {play ? (
         <DigitalClock
+          pause={setPlay}
           isBreak={isbreakTime}
           minutes={Math.floor(remainingTime / 60)}
           seconds={remainingTime % 60}

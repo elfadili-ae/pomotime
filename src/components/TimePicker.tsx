@@ -50,7 +50,7 @@ const TimePicker = ({ title, timeType, floor, max }: TimePickerPropTypes) => {
           onClick={() => {
             leftButton();
           }}
-          className="object-contain"
+          className="object-contain cursor-pointer"
           width="20"
           height="20"
           src={LeftArrow}
@@ -63,7 +63,7 @@ const TimePicker = ({ title, timeType, floor, max }: TimePickerPropTypes) => {
           onClick={() => {
             rightButton();
           }}
-          className="object-contain"
+          className="object-contain cursor-pointer"
           width="20"
           height="20"
           src={RightArrow}
