@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import DigitalClock from "./DigitalClock";
 import { TimeContext } from "@/context/TimeContext";
+import FocusNotif from "@/audio/focus.mp3";
+import BreakNotif from "../audio/break.mp3";
 
 type TimerPropTypes = {
   play: boolean;
@@ -11,6 +13,8 @@ type TimerPropTypes = {
 const Timer = ({ play, setPlay }: TimerPropTypes) => {
   const { focus, breakTime } = useContext(TimeContext).times;
   const circleRef = useRef(null);
+  const FocusSoundRef = useRef<HTMLAudioElement>(null);
+  const BreakSoundRef = useRef<HTMLAudioElement>(null);
   const [remainingTime, setRemainingTime] = useState(focus * 60); // Convert minutes to seconds
   const [isbreakTime, setIsBreaktime] = useState(false);
 
@@ -46,9 +50,17 @@ const Timer = ({ play, setPlay }: TimerPropTypes) => {
             circle.style.strokeDashoffset = circumference.toString();
           }
           if (isbreakTime) {
+            console.log("was break");
+            if (FocusSoundRef.current) {
+              FocusSoundRef.current.play();
+            }
             setIsBreaktime(false);
             setRemainingTime(focus * 60);
           } else {
+            console.log("was focus");
+            if (BreakSoundRef.current) {
+              BreakSoundRef.current.play();
+            }
             setIsBreaktime(true);
             setRemainingTime(breakTime * 60);
           }
@@ -58,7 +70,7 @@ const Timer = ({ play, setPlay }: TimerPropTypes) => {
     }, 1000);
 
     return () => clearInterval(timeInterval); // Cleanup the interval on unmount
-  }, [focus, play]);
+  }, [focus, play, isbreakTime]);
 
   return (
     <div className="w-full h-full flex justify-center items-center relative">
@@ -95,6 +107,9 @@ const Timer = ({ play, setPlay }: TimerPropTypes) => {
           fill="none"
         />
       </svg>
+
+      <audio ref={FocusSoundRef} src={FocusNotif} />
+      <audio ref={BreakSoundRef} src={BreakNotif} />
     </div>
   );
 };

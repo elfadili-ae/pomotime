@@ -1,15 +1,8 @@
 "use client";
-import { useContext } from "react";
-import Image from "next/image";
 import React from "react";
-import LeftArrow from "../icons/leftArrow.png";
-import RightArrow from "../icons/rightArrow.png";
-import { TimeContext } from "@/context/TimeContext";
 import TimePicker from "./TimePicker";
 
 const Settings = () => {
-  const { times, setTimes } = useContext(TimeContext);
-
   return (
     <div className="text-black absolute bottom-2 w-full h-16 flex  justify-around items-center">
       {/* <div className="flex justify-center items-center flex-col">
@@ -34,7 +27,7 @@ const Settings = () => {
           />
         </div>
       </div> */}
-      <TimePicker title="Focus" timeType="focus" floor={5} max={50} />
+      <TimePicker title="Focus" timeType="focus" floor={15} max={50} />
       <TimePicker title="Break" timeType="breakTime" floor={5} max={15} />
     </div>
   );
